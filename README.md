@@ -1,30 +1,30 @@
 # EVA Data Analysis
 
-Analyses extra-vehicular activity (EVA) records from `1399478eva-data.json` (375 EVAs by the USA and Russia, 1965 to 2013). When you run it, it:
+This program looks at a dataset of 375 spacewalks (EVAs) by the USA and Russia between 1965 and 2013. When you run it, it:
 
-1. Saves a chart of cumulative EVA duration to `cumulative_duration.png`.
-2. Prints how many EVAs were short (under 4 hours), standard (4 to 7 hours) and long (7 hours or more).
-3. Prints how many invalid records were skipped.
-4. Asks for a country and prints its number of EVAs, total duration and average duration.
-5. Asks for two countries and a range of years, and compares their EVA activity over that period.
+1. saves a chart of total EVA hours over time
+2. shows how many EVAs were short, standard or long
+3. says how many records in the data were invalid and skipped
+4. asks for a country and shows its number of EVAs, total hours and average
+5. asks for two countries and a range of years, and compares them
 
 ## Setup
 
-Requires Python 3.8 or later.
+You need Python 3.8 or newer. Install matplotlib with:
 
 ```
 pip install -r requirements.txt
 ```
 
-## Running the application
+## Running it
 
-Run from the repository root, so the data file can be found:
+From this folder, so the program can find the data file:
 
 ```
 python 1399480evacodev2.py
 ```
 
-Country names are case-sensitive and must match the data (`USA` or `Russia`). Years are whole numbers, and the comparison includes both the start and end years.
+Country names have to match the data exactly (`USA` or `Russia`). The comparison counts both the start and end years.
 
 ## Running the tests
 
@@ -32,31 +32,32 @@ Country names are case-sensitive and must match the data (`USA` or `Russia`). Ye
 python -m unittest discover -s tests -v
 ```
 
-The 16 tests don't need the data file or matplotlib.
+There are 16 tests. They don't need the data file or matplotlib.
 
-## Module structure
+## How the code is organised
 
-| Module | Responsibility |
+| Part | What it does |
 |---|---|
-| `1399480evacodev2.py` | Entry point. Only calls `eva.app.main()` |
-| `eva/app.py` | Coordinates a run: calls the other modules in order and passes data between them |
-| `eva/loader.py` | Reads the JSON data file |
-| `eva/records.py` | Validates raw entries and turns them into `EvaRecord` objects, counting the ones it skips |
-| `eva/analysis.py` | All calculations: length categories, cumulative duration, country summaries and the country comparison. No file access, printing or input |
-| `eva/presentation.py` | Everything the user sees: prompts, printed results and the chart |
-| `tests/` | Automated tests for `records.py` and `analysis.py` |
+| `1399480evacodev2.py` | The starting point. It just calls the app |
+| `eva/app.py` | Runs each step in order and passes data between the other modules |
+| `eva/loader.py` | Reads the data file |
+| `eva/records.py` | Checks each entry, skips the bad ones and keeps the rest as clean records |
+| `eva/analysis.py` | All the calculations. It never reads files, prints or asks for input |
+| `eva/presentation.py` | Everything the user sees: the questions, the printed results and the chart |
+| `tests/` | Tests for the records and the calculations |
 
-`app.py` depends on the four modules below it, and `analysis.py` depends on `records.py`. Nothing else imports another project module. See [docs/architecture.md](docs/architecture.md) for the diagram and the interfaces between modules.
+The app uses the other four modules, and the analysis uses the records. Nothing else depends on anything. There's a diagram in [docs/architecture.md](docs/architecture.md).
 
-## Documentation and decision records
+## Write-ups and decision records
 
-- [docs/initial-assessment.md](docs/initial-assessment.md): what the inherited code did and its problems
-- [docs/architecture.md](docs/architecture.md): module responsibilities, dependencies, interfaces and diagram
-- [docs/country-comparison.md](docs/country-comparison.md): how the comparison feature was added
-- [docs/evaluation.md](docs/evaluation.md): test evidence and before/after evaluation
-- [docs/adr/ADR-001.md](docs/adr/ADR-001.md): split the script into modules by responsibility
-- [docs/adr/ADR-002.md](docs/adr/ADR-002.md): test the analysis as plain functions with hand-made records
+- [Initial assessment](docs/initial-assessment.md): what the inherited code did and what was wrong with it
+- [Architecture](docs/architecture.md): the modules, how they connect and why
+- [Restructuring](docs/restructuring.md): how the code was split up without changing what it does
+- [Country comparison](docs/country-comparison.md): how the new feature was added
+- [Evaluation](docs/evaluation.md): test results and a before-and-after comparison
+- [ADR-001](docs/adr/ADR-001.md): split the script into modules by responsibility
+- [ADR-002](docs/adr/ADR-002.md): test the calculations directly with made-up records
 
 ## History
 
-The repository was inherited with six commits that built up a single script. The commits since then are, in order: the initial assessment, the proposed architecture and ADR-001, a housekeeping commit (`.gitignore` and `requirements.txt`), the restructure on its own, the country comparison feature, the automated tests, and the evaluation, ADR-002 and this README.
+I inherited this repository with six commits that built up a single script. Everything after that is my work: the assessment and design first, then a small tidy-up, the restructure on its own, the comparison feature, the tests, and finally the evaluation, the second ADR and this README.

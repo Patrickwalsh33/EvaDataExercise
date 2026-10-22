@@ -48,7 +48,7 @@ def prepare_records(raw_records):
             skipped += 1
             continue
 
-        # an empty country string is stored as None so it never matches a search
+        # treat a blank country the same as a missing one
         records.append(EvaRecord(date, duration_hours, eva.get("country") or None))
 
     records.sort(key=lambda record: record.date)

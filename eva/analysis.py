@@ -69,7 +69,7 @@ class CountryComparison:
     summary_a: CountrySummary
     country_b: str
     summary_b: CountrySummary
-    leader: Optional[str]  # None means the totals are tied
+    leader: Optional[str]  # None if it's a tie
 
 
 def countries_in(records: List[EvaRecord]):
@@ -88,7 +88,7 @@ def compare_countries(records: List[EvaRecord], country_a, country_b, start_year
     summary_a = country_summary(in_period, country_a)
     summary_b = country_summary(in_period, country_b)
 
-    # durations are whole minutes, so equal totals can still differ by float rounding
+    # decimals can be off by a tiny amount, so check for "close enough" instead of ==
     if math.isclose(summary_a.total_hours, summary_b.total_hours, abs_tol=1e-9):
         leader = None
     elif summary_a.total_hours > summary_b.total_hours:

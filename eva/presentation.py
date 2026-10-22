@@ -1,6 +1,6 @@
 import matplotlib
 
-# non-interactive backend: the chart is saved to a file, never shown in a window
+# save the chart to a file instead of opening a window
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -33,7 +33,7 @@ def show_skipped(skipped_count):
 
 
 def _read(prompt):
-    # None means input has ended (Ctrl+D / Ctrl+Z or the end of a piped file)
+    # returns None if there's no more input, e.g. the user pressed Ctrl+Z
     try:
         return input(prompt).strip()
     except EOFError:

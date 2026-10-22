@@ -2,11 +2,11 @@
 
 ## Feature commit
 
-The feature is commit 751a4da, "Add country comparison feature". It comes after the restructuring commit, so the restructure and the new functionality are in separate commits.
+The comparison feature is in its own commit (751a4da), after the restructure.
 
 ## How the comparison works
 
-After the existing single-country step, the program asks for Country A, Country B, a start year and an end year. It then shows the number of EVAs, total duration and average duration for each country in that period, and which country has the greater total duration. Example run:
+After the existing country question, the program asks for two countries and a start and end year. It then shows each country's number of EVAs, total hours and average hours for that period, and says which one has more hours in total. For example:
 
 ```
 Country A: USA
@@ -24,39 +24,29 @@ Russia: average EVA duration = 4.70 hours
 Result: Russia has the greater total EVA duration
 ```
 
-How it meets each requirement:
+It handles the awkward cases the brief mentions:
 
-- Both years are included: records_between_years keeps EVAs where start_year <= year <= end_year. 1965 to 1966 gives 9 USA EVAs, which is 1 from 1965 plus 8 from 1966.
-- No matching EVAs: the count and total are 0 and the average is shown as "unavailable".
-- Tie: if both totals are equal the result says it's a tie. Entering the same country twice shows this.
-- Unknown countries: a country that isn't in the data (for example Mars) is reported as "not found in the data" with zero results, instead of an error.
-- Invalid input: a blank country name, a year that isn't a whole number, or a start year after the end year gets a message and is asked for again.
-- No unexpected termination: if input ends at any prompt, the program prints "No more input. Goodbye!" and exits normally. This also fixes the crash in the original single-country prompt.
-- Existing functionality: for all five inputs from the baseline, everything before the comparison is identical to the original output.
+- Both the start and end years count. 1965 to 1966 gives the USA 9 EVAs: 1 in 1965 and 8 in 1966.
+- A country with no EVAs in that period shows 0 EVAs, 0 hours and "unavailable" for the average.
+- If both totals are the same, it says it's a tie.
+- A country that isn't in the data at all, like Mars, gets a "not found" note and zeros instead of an error.
+- A blank country, a year that isn't a number, or a start year after the end year gets a message and you're asked again.
+- If the input runs out at any point, it says goodbye and exits normally instead of crashing. This fixes the old crash too.
 
-I checked the numbers by calculating them separately from the raw JSON file, and they match.
+Everything printed before the comparison is exactly the same as the original. I also double-checked the numbers by working them out separately from the raw data.
 
 ## Reuse of existing analysis
 
-compare_countries doesn't calculate any totals itself. It filters the records to the year range and then calls the existing country_summary for each country, which is the same function the single-country report uses. So count, total and average are worked out in one place, and the "unavailable" average comes from country_summary returning None for a country with no EVAs.
-
-The comparison also uses the same EvaRecord list that prepare_records already produces, so no new loading or validation code was needed.
+The comparison doesn't do any adding up of its own. It narrows the records down to the chosen years, then uses the same country summary that the original single-country report uses. So the count, total and average are only ever calculated in one place. It also works from the same clean records as everything else, so no new loading or checking code was needed.
 
 ## Modules changed
 
-Three modules changed:
+Only three: analysis got the comparison calculation, presentation got the new questions and output, and app got one extra step. The loader, records and the starting script didn't change at all.
 
-- analysis.py: added CountryComparison, countries_in, records_between_years and compare_countries.
-- presentation.py: added the comparison prompts and output, and a small _read helper that handles the end of input. ask_country now uses _read, which is the only change to existing code.
-- app.py: added the comparison step after the existing country summary.
-
-loader.py, records.py and the entry script didn't change. Adding a new analysis only needed the calculation in analysis.py, the input and output in presentation.py, and one step in app.py, which is how ADR-001 expected it to work.
+That's how the design was meant to work. A new feature adds a calculation, a way to show it and a step to run it, and nothing else needs touching. The only change to existing code was making the country question cope with input running out.
 
 ## Architectural changes
 
-No architectural changes were needed. There are no new modules and no new dependencies between modules, and the diagram in tab 2 still applies. The only new import is Python's standard math module in analysis.py, used to compare totals for a tie.
+None were needed. There are no new modules and no new connections between them, so the diagram in tab 2 still holds.
 
-Two small design choices are worth recording:
-
-- The year range is checked in two places. presentation.py asks the user again if the start year is after the end year, and compare_countries raises a ValueError if it's ever called with an invalid range. The first is for the user, and the second protects the calculation if it's reused somewhere else.
-- Ties are checked with math.isclose instead of ==, because totals that should be equal can differ slightly in floating point.
+Two small choices are worth mentioning. The year range is checked twice: once when the user types it, so they can try again, and once in the calculation itself, so it can't be misused if someone calls it from somewhere else. And ties are checked as "close enough" rather than exactly equal, because decimal numbers in Python can be off by a tiny amount.
