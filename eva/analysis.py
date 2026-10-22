@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -58,3 +59,41 @@ def country_summary(records: List[EvaRecord], country):
     total_hours = sum(durations)
     average_hours = total_hours / len(durations) if durations else None
     return CountrySummary(len(durations), total_hours, average_hours)
+
+
+@dataclass(frozen=True)
+class CountryComparison:
+    start_year: int
+    end_year: int
+    country_a: str
+    summary_a: CountrySummary
+    country_b: str
+    summary_b: CountrySummary
+    leader: Optional[str]  # None means the totals are tied
+
+
+def countries_in(records: List[EvaRecord]):
+    return {record.country for record in records if record.country}
+
+
+def records_between_years(records: List[EvaRecord], start_year, end_year):
+    return [record for record in records if start_year <= record.date.year <= end_year]
+
+
+def compare_countries(records: List[EvaRecord], country_a, country_b, start_year, end_year):
+    if start_year > end_year:
+        raise ValueError("start_year must not be after end_year")
+
+    in_period = records_between_years(records, start_year, end_year)
+    summary_a = country_summary(in_period, country_a)
+    summary_b = country_summary(in_period, country_b)
+
+    # durations are whole minutes, so equal totals can still differ by float rounding
+    if math.isclose(summary_a.total_hours, summary_b.total_hours, abs_tol=1e-9):
+        leader = None
+    elif summary_a.total_hours > summary_b.total_hours:
+        leader = country_a
+    else:
+        leader = country_b
+
+    return CountryComparison(start_year, end_year, country_a, summary_a, country_b, summary_b, leader)

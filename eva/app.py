@@ -15,4 +15,15 @@ def main():
     presentation.show_skipped(skipped_count)
 
     country = presentation.ask_country()
+    if country is None:
+        presentation.show_input_ended()
+        return
     presentation.show_country_summary(country, analysis.country_summary(eva_records, country))
+
+    request = presentation.ask_comparison()
+    if request is None:
+        presentation.show_input_ended()
+        return
+    country_a, country_b, start_year, end_year = request
+    comparison = analysis.compare_countries(eva_records, country_a, country_b, start_year, end_year)
+    presentation.show_comparison(comparison, analysis.countries_in(eva_records))
