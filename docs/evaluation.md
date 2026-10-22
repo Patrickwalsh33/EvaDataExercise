@@ -36,19 +36,19 @@ Before, it was one 151-line file of loose code sharing global variables, with no
 
 ### How many modules needed modification to implement FR22?
 
-Three out of six: analysis, presentation and app. The rest didn't change. In the original, the same feature would have meant going back into the main loop to track years for each country, and piling more input, maths and printing into the same file.
+Three out of six: analysis.py, presentation.py and app.py. The rest didn't change. In the original, the same feature would have meant going back into the main loop to track years for each country, and piling more input, maths and printing into the same file.
 
 ### Which modules depend on other modules?
 
-app depends on the other four modules, and analysis depends on records. Nothing else depends on anything, and nothing depends on presentation, so the display can change without affecting a calculation. I checked this by looking at what each file imports. In the original, everything depended on the same shared variables.
+app.py depends on the other four modules, and analysis.py depends on records.py. Nothing else depends on anything, and nothing depends on presentation.py, so the display can change without affecting a calculation. I checked this by looking at what each file imports. In the original, everything depended on the same shared variables.
 
 ### Can calculations be tested without reading files or displaying results?
 
-Yes. The calculation and record modules don't read files, print or use matplotlib, so the tests just hand them some records and check what comes back. The whole set runs in a fraction of a second without the data file. Before, you couldn't even import the code without the whole program running.
+Yes. analysis.py and records.py don't read files, print or use matplotlib, so the tests just hand them some records and check what comes back. The whole set runs in a fraction of a second without the data file. Before, you couldn't even import the code without the whole program running.
 
 ### Are responsibilities easier to identify?
 
-Yes. Each module is named after what it does, so you know where to look. Want to change the wording of the output? That's presentation. Want to change what counts as a valid record? That's records. Before, you had to read the whole script to find anything, because it was all mixed together.
+Yes. Each module is named after what it does, so you know where to look. Want to change the wording of the output? That's presentation.py. Want to change what counts as a valid record? That's records.py. Before, you had to read the whole script to find anything, because it was all mixed together.
 
 ### Has duplication been reduced?
 
@@ -58,6 +58,6 @@ There's still a bit of repetition in how the two features print country stats, b
 
 ### Did the restructuring introduce unnecessary complexity?
 
-A bit, but I think it's worth it. There are six files instead of one, and you have to start in app to follow what happens. The code went from 151 lines to 318, but most of that is the new feature. The restructure on its own only took it to 189.
+A bit, but I think it's worth it. There are six files instead of one, and you have to start in app.py to follow what happens. The code went from 151 lines to 318, but most of that is the new feature. The restructure on its own only took it to 189.
 
-I didn't add classes, frameworks or extra libraries, and every module is short. Honestly, in a program this small the loader could be folded into records, but the brief wants reading kept separate, and it does mean a new data source only changes one file. In return, the calculations can be tested on their own and the new feature only touched three files.
+I didn't add classes, frameworks or extra libraries, and every module is short. Honestly, in a program this small loader.py could be folded into records.py, but the brief wants reading kept separate, and it does mean a new data source only changes one file. In return, the calculations can be tested on their own and the new feature only touched three files.

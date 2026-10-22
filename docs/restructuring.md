@@ -8,11 +8,11 @@ Just before it there's a small tidy-up commit (5984205). It adds a .gitignore an
 
 ## Where the existing code moved
 
-Reading the file went into the loader, and the file name now comes from app. The validation loop and the sorting went into records, which now keeps the country on each record and returns the number skipped instead of using a global.
+Reading the file went into loader.py, and the file name now comes from app.py. The validation loop and the sorting went into records.py, which now keeps the country on each record and returns the number skipped instead of using a global.
 
-The length categories and the running total went into analysis. The two country dictionaries and the separate average calculation were replaced by one country summary function, also in analysis.
+The length categories and the running total went into analysis.py. The two country dictionaries and the separate average calculation were replaced by one country summary function, also in analysis.py.
 
-The chart, all the printing and the country question went into presentation, and the order of everything now lives in app's main function. All the global variables are gone, and the original script is down from 151 lines to 4.
+The chart, all the printing and the country question went into presentation.py, and the order of everything now lives in the main function in app.py. All the global variables are gone, and the original script is down from 151 lines to 4.
 
 ## AR5: Evidence that existing behaviour is preserved
 

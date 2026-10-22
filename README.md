@@ -46,7 +46,7 @@ There are 16 tests. They don't need the data file or matplotlib.
 | `eva/presentation.py` | Everything the user sees: the questions, the printed results and the chart |
 | `tests/` | Tests for the records and the calculations |
 
-The app uses the other four modules, and the analysis uses the records. Nothing else depends on anything. There's a diagram in [docs/architecture.md](docs/architecture.md).
+app.py uses the other four modules, and analysis.py uses records.py. Nothing else depends on anything. There's a diagram in [docs/architecture.md](docs/architecture.md).
 
 ## Write-ups and decision records
 

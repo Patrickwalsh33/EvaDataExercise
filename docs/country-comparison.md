@@ -41,7 +41,7 @@ The comparison doesn't do any adding up of its own. It narrows the records down 
 
 ## Modules changed
 
-Only three: analysis got the comparison calculation, presentation got the new questions and output, and app got one extra step. The loader, records and the starting script didn't change at all.
+Only three: analysis.py got the comparison calculation, presentation.py got the new questions and output, and app.py got one extra step. loader.py, records.py and the starting script didn't change at all.
 
 That's how the design was meant to work. A new feature adds a calculation, a way to show it and a step to run it, and nothing else needs touching. The only change to existing code was making the country question cope with input running out.
 
